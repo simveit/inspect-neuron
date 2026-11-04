@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Template remote runner. Copy to run/remote.sh (gitignored), copy run.env.example to
+# run/run.env and fill it in. With run/remote.sh present, scripts/nn.sh delegates every call
+# here, --cmd included.
+#
+#   ./scripts/nn.sh --check                  settings and a connection check
+#   ./scripts/nn.sh --cmd '<command>'        run a shell command where nn runs
+#   ./scripts/nn.sh --dry-run <nn args>      print the host and command that would run; no ssh
+#   ./scripts/nn.sh --detach <nn args>       start a long nn command, print its pid and log
+#   ./scripts/nn.sh <nn args>                run nn synchronously on the host
+#
+# Keep host names, paths and logs in run/ only; nothing here names a real machine.
+set -euo pipefail
+
+ROOT=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+# shellcheck disable=SC1091
+[ -f "$ROOT/run/run.env" ] && . "$ROOT/run/run.env"
+
+: "${NN_REMOTE_HOST:?set NN_REMOTE_HOST in run/run.env (user@host or an SSH alias)}"
+: "${NN_REMOTE_REPO:?set NN_REMOTE_REPO in run/run.env (e.g. /path/to/repo)}"
+NN_REMOTE_NN=${NN_REMOTE_NN:-.venv/bin/nn}
+
+qq() { printf '%q' "$1"; }
+
+env_prefix() {
+  local name
+  for name in NN_STORE NN_SERVER NN_RUN NN_LIBRARY CUDA_VISIBLE_DEVICES HF_HOME; do
+    if [ -n "${!name:-}" ]; then
+      printf '%s=%q ' "$name" "${!name}"
+    fi
+  done
+}
+
+quote_args() {
+  local arg
+  for arg in "$@"; do
+    printf ' %q' "$arg"
+  done
+}
+
+nn_command() {
+  printf '%s%s' "$(qq "$NN_REMOTE_NN")" "$(quote_args "$@")"
+}
+
+remote_exec() {  # $1: shell command to run in the checkout on the remote host
+  local prefix
+  prefix=$(env_prefix)
+  ssh "$NN_REMOTE_HOST" "cd $(qq "$NN_REMOTE_REPO") && env $prefix bash -c $(qq "$1")"
+}
+
+case "${1:-}" in
+  --check)
+    prefix=$(env_prefix)
+    printf 'host: %s\nrepo: %s\n' "$NN_REMOTE_HOST" "$NN_REMOTE_REPO"
+    ssh "$NN_REMOTE_HOST" "cd $(qq "$NN_REMOTE_REPO") && printf 'remote home: %s\n' \"\$HOME\" && env $prefix $(qq "$NN_REMOTE_NN") --help >/dev/null && echo 'nn: ok' && (nvidia-smi --query-gpu=index,memory.used,memory.total --format=csv,noheader || true)"
+    printf 'store: %s\nserver: %s\n' "${NN_STORE:-unset}" "${NN_SERVER:-http://127.0.0.1:8765}"
+    ;;
+  --dry-run)
+    shift
+    printf 'host: %s\nrepo: %s\nnn: %s\n' "$NN_REMOTE_HOST" "$NN_REMOTE_REPO" "$(nn_command "$@")"
+    ;;
+  --cmd)
+    shift
+    [ "$#" -gt 0 ] || { echo "usage: run/remote.sh --cmd COMMAND" >&2; exit 2; }
+    remote_exec "$*"
+    ;;
+  --detach)
+    shift
+    [ "$#" -gt 0 ] || { echo "usage: run/remote.sh --detach NN-ARGS..." >&2; exit 2; }
+    prefix=$(env_prefix)
+    log="run/logs/nn-$(date +%Y%m%d-%H%M%S)-$$.log"
+    ssh "$NN_REMOTE_HOST" "mkdir -p $(qq "$NN_REMOTE_REPO/run/logs") && cd $(qq "$NN_REMOTE_REPO") && nohup env $prefix $(nn_command "$@") > $(qq "$log") 2>&1 < /dev/null & echo \$!"
+    printf 'log: %s:%s/%s\n' "$NN_REMOTE_HOST" "$NN_REMOTE_REPO" "$log"
+    ;;
+  *)
+    remote_exec "$(nn_command "$@")"
+    ;;
+esac

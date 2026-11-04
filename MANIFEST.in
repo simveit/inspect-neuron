@@ -1,0 +1,8 @@
+include README.md AGENTS.md DESIGN_DOC.md CITATION.cff pyproject.toml LICENSE
+recursive-include nn *.py *.html *.css
+recursive-include .dsh *
+recursive-include scripts *
+recursive-include run.example *
+recursive-include examples *
+recursive-include docs *.md
+recursive-include tests *.py *.md

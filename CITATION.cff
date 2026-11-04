@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use inspect-neuron in your work, please cite this software record."
+title: "inspect-neuron"
+abstract: >-
+  A research toolkit for explaining individual MLP neurons, testing those
+  explanations blindly with independent agents, and probing how forcing a
+  documented neuron changes model behaviour.
+type: software
+version: "0.1.0"
+date-released: "2026-11-03"
+license: MIT
+authors:
+  - family-names: "Veitner"
+    given-names: "Simon"
+repository-code: "https://github.com/simveit/inspect-neuron"
+url: "https://github.com/simveit/inspect-neuron"
+keywords:
+  - interpretability
+  - neuron explanations
+  - activation steering
+  - blind evaluation
+  - DeepSeek Harness

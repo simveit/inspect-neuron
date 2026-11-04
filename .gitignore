@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Environments and local secrets
+.venv/
+venv/
+env/
+.env
+.envrc
+*.pem
+*.key
+
+# Local runner configuration (copy run.example/ to run/ and fill it in; never commit it)
+run/
+
+# Experiment outputs and generated pages (local artifacts, never committed)
+reports/
+runs/
+neuron-library/
+outputs/
+logs/
+*.log
+cache/
+.cache/
+
+# Data, models and weights
+data/
+datasets/
+models/
+weights/
+checkpoints/
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.npy
+*.npz
+*.h5
+*.parquet
+*.arrow
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Large downloads and local notes
+*.pdf
+*.local

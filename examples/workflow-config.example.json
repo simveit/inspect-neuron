@@ -1,0 +1,6 @@
+{
+  "run": "smoke",
+  "store": "/path/to/store",
+  "select": { "n": 2, "seed": 0, "top": 20 },
+  "runner": "./scripts/nn.sh"
+}

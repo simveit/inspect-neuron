@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$neuron · $title</title>
+<style>
+$style
+</style>
+<script type="application/json" id="nn-page">$meta</script>
+</head>
+<body>
+<main class="wrap">
+<header>
+  <div class="eyebrow"><a href="../index.html">Neuron library</a> · $model_short</div>
+  <h1>$title</h1>
+  <ul class="meta">
+    <li><b>$neuron</b></li>
+    <li>$model</li>
+    <li>run <b>$run</b></li>
+    <li>$date</li>
+    <li>card <b>$card_id</b></li>
+  </ul>
+  <p class="lede">$summary</p>
+  <div class="grades">
+    <div class="grade">
+      <div class="head"><span class="name">Clean</span><span class="score">$clean_pips $clean/5</span></div>
+      <p>$clean_why</p>
+    </div>
+    <div class="grade">
+      <div class="head"><span class="name">Interesting</span><span class="score">$interesting_pips $interesting/5</span></div>
+      <p>$interesting_why</p>
+    </div>
+  </div>
+  <nav class="jump" aria-label="Poles on this page"><span>Explained here</span><ul>$jump</ul></nav>
+</header>
+$showcase
+$poles
+<section class="card-box">
+$card
+</section>
+<footer>
+  <p>This page shows only the poles whose newest blind test was a WIN. A tester who never saw the corpus wrote new texts from the anonymized description, a near-miss twin for each, and distant texts; a text is strong when it reaches $strong of the short-context max. WIN means new texts were strong more often than near misses, one-sided Fisher exact p &lt; $alpha.</p>
+  <p>Written by <code>nn paper save</code> or <code>nn library rebuild</code>. <a href="../index.html">All neurons</a></p>
+</footer>
+</main>
+</body>
+</html>

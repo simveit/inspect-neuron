@@ -1,0 +1,17 @@
+{
+  "name": "blind-neuron-test",
+  "description": "The autonomous neuron pipeline: optionally screen an intent corpus for relevant neurons, explain each pick with inspector agents and blind testers (one pooled nn score), write papers, then probe how to steer every documented neuron with a fixed calibrated dose sweep, judge every run, save one showcase record per neuron, and write the report and library pages.",
+  "whenToUse": "Run the full pipeline on a harvested store. `screen` first ranks neurons for an intent against a benign contrast and harvests the picks; Setup checks the store and nn server and resolves the neuron list; inspectors, anonymizers, blind testers, pooled scores and papers explain and test each neuron. Then every scored neuron gets one calibrated nn generate --json --chat call per position policy (the whole add/set/scale grid in each call, in sigma, absmax or resid units), one judge agent scores every run for coherence, on-concept shift, unaligned behaviour and movement, and the workflow deterministically selects the best coherent on-concept run (largest |strength|, then movement; an incoherent run is never selected). One nn steering save record per neuron carries the full generation, a coherent control, the judge's classification, the recipe and the reproduce command. The report renders the blind body plus ## Showcase, the workflow appends ## Steering and rebuilds the library pages. Works on a full store and on a smaller targeted store; every nn command goes through `runner` (default `./scripts/nn.sh`: local, or delegated to the machine-local `run/remote.sh` when that file exists; copy `run.example/` to `run/` to configure a remote GPU host). Set `store` to the harvested store.",
+  "phases": [
+    { "title": "Screen", "detail": "optional: nn screen the intent vs benign contrast, pick relevant neurons, harvest a targeted store" },
+    { "title": "Setup", "detail": "check store and server, resolve the neuron list or nn select" },
+    { "title": "Inspect", "detail": "inspectors probe each neuron independently; one inspector submits the card" },
+    { "title": "Synthesize", "detail": "merge the inspectors into one card (skipped when inspectors = 1)" },
+    { "title": "Anonymize", "detail": "one anonymizer per pole removes every leak before testing" },
+    { "title": "Test", "detail": "blind testers per pole, no tools, anonymized text only" },
+    { "title": "Score", "detail": "one pooled nn score call per neuron" },
+    { "title": "Paper", "detail": "one paper writer per neuron (optional)" },
+    { "title": "Steer", "detail": "fixed calibrated probe: one nn generate call per position policy, one judge per neuron, deterministic never-incoherent selection, one showcase record per neuron" },
+    { "title": "Report", "detail": "nn report (body + ## Showcase), nn library rebuild, copy the pages, append ## Steering" }
+  ]
+}
